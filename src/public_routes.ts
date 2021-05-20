@@ -15,4 +15,6 @@ const router = Router();
 // signup route, creates a new user in the DB
 router.post('/user', safe(createUser));
 
+
+
 export default router;
