@@ -13,7 +13,7 @@ import { createUser } from './actions';
 const router = Router();
 
 // signup route, creates a new user in the DB
-router.post('/user', safe(createUser));
+router.post('/users', safe(createUser));
 
 
 

@@ -18,15 +18,14 @@ import * as actions from './actions';
 // declare a new router to include all the endpoints
 const router = Router();
 
-router.get('/user', safe(actions.getUsers));
-router.get('/user/:id', safe(actions.getUser));
-router.put('user/:id', safe(actions.updateUser));
-router.delete('/user/:id', safe(actions.deleteUsers));
-
-router.post('/todo/user', safe(actions.createTodo));
-router.get('/todo/user', safe(actions.getTodos));
-router.get('/todo/user:id', safe(actions.getTodo));
-router.put('todo/user:id', safe(actions.updateTodo));
-router.delete('/todo/user:id', safe(actions.deleteTodos));
+router.get('/users', safe(actions.getUsers));
+router.get('/users/:id', safe(actions.getUser));
+router.put('/users/:id', safe(actions.updateUser));
+router.post('/todos/users/:id', safe(actions.createTodo));
+router.get('/todos/users', safe(actions.getTodos));
+router.get('/todos/users/:id', safe(actions.getTodo));
+router.put('/todos/users/:id', safe(actions.updateTodo));
+router.delete('/todos/users/:id', safe(actions.deleteUsers));
+// router.delete('/todos/:id', safe(actions.deleteTodos));
 
 export default router;

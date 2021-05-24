@@ -18,7 +18,6 @@ export class Users extends BaseEntity{
   @Column()
   password: string;
 
-  @OneToMany(() => Todos, todos => todos.users)
+  @OneToMany(() => Todos, todos => todos.users, {cascade: true})
     todo: Todos[];
-    cascade: true
 }
