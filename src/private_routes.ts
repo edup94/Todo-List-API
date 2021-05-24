@@ -19,12 +19,14 @@ import * as actions from './actions';
 const router = Router();
 
 router.get('/user', safe(actions.getUsers));
-router.merge('user/:id', safe(actions.updateUser));
+router.get('/user/:id', safe(actions.getUser));
+router.put('user/:id', safe(actions.updateUser));
 router.delete('/user/:id', safe(actions.deleteUsers));
 
-router.post('/todo', safe(actions.createTodo));
-router.get('/todo', safe(actions.getTodos));
-router.merge('todo/:id', safe(actions.updateTodo));
-router.delete('/todo/:id', safe(actions.deleteTodos));
+router.post('/todo/user', safe(actions.createTodo));
+router.get('/todo/user', safe(actions.getTodos));
+router.get('/todo/user:id', safe(actions.getTodo));
+router.put('todo/user:id', safe(actions.updateTodo));
+router.delete('/todo/user:id', safe(actions.deleteTodos));
 
 export default router;

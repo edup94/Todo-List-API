@@ -15,15 +15,30 @@ export const createUser = async (req: Request, res:Response): Promise<Response> 
 	const userRepo = getRepository(Users)
 	// fetch for any user with this email
 	const user = await userRepo.findOne({ where: {email: req.body.email }})
-	if(user) throw new Exception("Users already exists with this email")
+    if(user) throw new Exception("Users already exists with this email")
+    
+    const newDefaultTodo = getRepository(Todos).create()
+    newDefaultTodo.label = "Example"
+    newDefaultTodo.done = false;
 
-	const newUser = getRepository(Users).create(req.body);  //Creo un usuario
+    //Creo un usuario
+    const newUser = userRepo.create() 
+    newUser.first_name = req.body.first_name
+    newUser.last_name = req.body.last_name
+    newUser.email = req.body.email
+    newUser.password = req.body.password
+    newUser.todo = [newDefaultTodo]
 	const results = await getRepository(Users).save(newUser); //Grabo el nuevo usuario 
 	return res.json(results);
 }
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> =>{
-		const users = await getRepository(Users).find();
+		const users = await getRepository(Users).find({ relations: ["todo"] });
+		return res.json(users);
+}
+
+export const getUser = async (req: Request, res: Response): Promise<Response> =>{
+		const users = await getRepository(Users).findOne(req.params.id);
 		return res.json(users);
 }
 
@@ -32,7 +47,7 @@ export const updateUser = async (req: Request, res:Response): Promise<Response> 
 
     // find user by id
 	const user = await userRepo.findOne(req.params.id); 
-	if(!user) throw new Exception("Not User found");
+	if(!user) throw new Exception("No User found");
 	
     // better to merge, that way we can do partial update (only a couple of properties)
 	userRepo.merge(user, req.body); 
@@ -51,28 +66,29 @@ export const deleteUsers = async (req: Request, res: Response): Promise<Response
 }
 
 export const createTodo = async (req: Request, res:Response): Promise<Response> =>{
-
-	// important validations to avoid ambiguos errors, the client needs to understand what went wrong
-	if(!req.body.label) throw new Exception("Please provide a label")
-	if(!req.body.done) throw new Exception("Please provide an state")
-
-	const todoRepo = getRepository(Todos)
-	// fetch for any user with this email
-	const todo = await todoRepo.findOne({ where: {label: req.body.label }})
-	if(todo) throw new Exception("Todo already exists with this label")
-
-	const newTodo = getRepository(Todos).create(req.body);  //Creo un todo
-	const results = await getRepository(Todos).save(newTodo); //Grabo el nuevo todo 
+    if(!req.body.label) throw new Exception("Please provide a label")
+    if(!req.body.done) throw new Exception("Please provide a state")
+    
+    //creo nuevo Todo
+    const newTodo = getRepository(Todos).create()
+    newTodo.label = req.body.label
+    newTodo.done = req.body.done
+    const results = await getRepository(Todos).save(newTodo); //Grabo el nuevo Todo
 	return res.json(results);
 }
 
 export const getTodos = async (req: Request, res: Response): Promise<Response> =>{
-		const todos = await getRepository(Todos).find();
+		const todos = await getRepository(Todos).find({ relations: ["user"] });
+		return res.json(todos);
+}
+
+export const getTodo = async (req: Request, res: Response): Promise<Response> =>{
+		const todos = await getRepository(Todos).findOne(req.params.id);
 		return res.json(todos);
 }
 
 export const updateTodo = async (req: Request, res:Response): Promise<Response> =>{
-    const todoRepo = getRepository(Todos) // I need the userRepo to manage todos
+    const todoRepo = getRepository(Todos) // I need the todoRepo to manage todos
 
     // find todo by id
 	const todo = await todoRepo.findOne(req.params.id); 
@@ -85,6 +101,11 @@ export const updateTodo = async (req: Request, res:Response): Promise<Response> 
 }
 
 export const deleteTodos = async (req: Request, res: Response): Promise<Response> =>{
-		const todos = await getRepository(Todos).delete(req.params.id);
+    const todos = await getRepository(Todos).findOne(req.params.id);
+    if(!todos) {
+        return res.json({ msg :"This todo doesn't exist."});
+    }else {
+    const todos = await getRepository(Todos).delete(req.params.id);
 		return res.json(todos);
+    }	
 }

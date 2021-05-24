@@ -37,10 +37,12 @@ var actions = __importStar(require("./actions"));
 // declare a new router to include all the endpoints
 var router = express_1.Router();
 router.get('/user', utils_1.safe(actions.getUsers));
-router.merge('user/:id', utils_1.safe(actions.updateUser));
+router.get('/user/:id', utils_1.safe(actions.getUser));
+router.put('user/:id', utils_1.safe(actions.updateUser));
 router["delete"]('/user/:id', utils_1.safe(actions.deleteUsers));
-router.post('/todo', utils_1.safe(actions.createTodo));
-router.get('/todo', utils_1.safe(actions.getTodos));
-router.merge('todo/:id', utils_1.safe(actions.updateTodo));
-router["delete"]('/todo/:id', utils_1.safe(actions.deleteTodos));
+router.post('/todo/user', utils_1.safe(actions.createTodo));
+router.get('/todo/user', utils_1.safe(actions.getTodos));
+router.get('/todo/user:id', utils_1.safe(actions.getTodo));
+router.put('todo/user:id', utils_1.safe(actions.updateTodo));
+router["delete"]('/todo/user:id', utils_1.safe(actions.deleteTodos));
 exports["default"] = router;

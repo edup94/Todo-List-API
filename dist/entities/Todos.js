@@ -26,6 +26,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 exports.__esModule = true;
 exports.Todos = void 0;
 var typeorm_1 = require("typeorm");
+var Users_1 = require("./Users");
 var Todos = /** @class */ (function (_super) {
     __extends(Todos, _super);
     function Todos() {
@@ -43,6 +44,10 @@ var Todos = /** @class */ (function (_super) {
         typeorm_1.Column(),
         __metadata("design:type", Boolean)
     ], Todos.prototype, "done");
+    __decorate([
+        typeorm_1.ManyToOne(function () { return Users_1.Users; }, function (users) { return users.todo; }, { onDelete: "CASCADE" }),
+        __metadata("design:type", Users_1.Users)
+    ], Todos.prototype, "users");
     Todos = __decorate([
         typeorm_1.Entity()
     ], Todos);

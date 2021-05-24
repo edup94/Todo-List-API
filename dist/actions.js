@@ -36,13 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.deleteTodos = exports.updateTodo = exports.getTodos = exports.createTodo = exports.deleteUsers = exports.updateUser = exports.getUsers = exports.createUser = void 0;
+exports.deleteTodos = exports.updateTodo = exports.getTodo = exports.getTodos = exports.createTodo = exports.deleteUsers = exports.updateUser = exports.getUser = exports.getUsers = exports.createUser = void 0;
 var typeorm_1 = require("typeorm"); // getRepository"  traer una tabla de la base de datos asociada al objeto
 var Users_1 = require("./entities/Users");
 var utils_1 = require("./utils");
 var Todos_1 = require("./entities/Todos");
 var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userRepo, user, newUser, results;
+    var userRepo, user, newDefaultTodo, newUser, results;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -61,7 +61,15 @@ var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 user = _a.sent();
                 if (user)
                     throw new utils_1.Exception("Users already exists with this email");
-                newUser = typeorm_1.getRepository(Users_1.Users).create(req.body);
+                newDefaultTodo = typeorm_1.getRepository(Todos_1.Todos).create();
+                newDefaultTodo.label = "Example";
+                newDefaultTodo.done = false;
+                newUser = userRepo.create();
+                newUser.first_name = req.body.first_name;
+                newUser.last_name = req.body.last_name;
+                newUser.email = req.body.email;
+                newUser.password = req.body.password;
+                newUser.todo = [newDefaultTodo];
                 return [4 /*yield*/, typeorm_1.getRepository(Users_1.Users).save(newUser)];
             case 2:
                 results = _a.sent();
@@ -74,7 +82,7 @@ var getUsers = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
     var users;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Users_1.Users).find()];
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Users_1.Users).find({ relations: ["todo"] })];
             case 1:
                 users = _a.sent();
                 return [2 /*return*/, res.json(users)];
@@ -82,6 +90,18 @@ var getUsers = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 exports.getUsers = getUsers;
+var getUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Users_1.Users).findOne(req.params.id)];
+            case 1:
+                users = _a.sent();
+                return [2 /*return*/, res.json(users)];
+        }
+    });
+}); };
+exports.getUser = getUser;
 var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userRepo, user, results;
     return __generator(this, function (_a) {
@@ -93,7 +113,7 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
             case 1:
                 user = _a.sent();
                 if (!user)
-                    throw new utils_1.Exception("Not User found");
+                    throw new utils_1.Exception("No User found");
                 // better to merge, that way we can do partial update (only a couple of properties)
                 userRepo.merge(user, req.body);
                 return [4 /*yield*/, userRepo.save(user)];
@@ -122,24 +142,19 @@ var deleteUsers = function (req, res) { return __awaiter(void 0, void 0, void 0,
 }); };
 exports.deleteUsers = deleteUsers;
 var createTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var todoRepo, todo, newTodo, results;
+    var newTodo, results;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                // important validations to avoid ambiguos errors, the client needs to understand what went wrong
                 if (!req.body.label)
                     throw new utils_1.Exception("Please provide a label");
                 if (!req.body.done)
-                    throw new utils_1.Exception("Please provide an state");
-                todoRepo = typeorm_1.getRepository(Todos_1.Todos);
-                return [4 /*yield*/, todoRepo.findOne({ where: { label: req.body.label } })];
-            case 1:
-                todo = _a.sent();
-                if (todo)
-                    throw new utils_1.Exception("Todo already exists with this label");
-                newTodo = typeorm_1.getRepository(Todos_1.Todos).create(req.body);
+                    throw new utils_1.Exception("Please provide a state");
+                newTodo = typeorm_1.getRepository(Todos_1.Todos).create();
+                newTodo.label = req.body.label;
+                newTodo.done = req.body.done;
                 return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).save(newTodo)];
-            case 2:
+            case 1:
                 results = _a.sent();
                 return [2 /*return*/, res.json(results)];
         }
@@ -150,7 +165,7 @@ var getTodos = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
     var todos;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).find()];
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).find({ relations: ["user"] })];
             case 1:
                 todos = _a.sent();
                 return [2 /*return*/, res.json(todos)];
@@ -158,12 +173,24 @@ var getTodos = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 exports.getTodos = getTodos;
+var getTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var todos;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).findOne(req.params.id)];
+            case 1:
+                todos = _a.sent();
+                return [2 /*return*/, res.json(todos)];
+        }
+    });
+}); };
+exports.getTodo = getTodo;
 var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var todoRepo, todo, results;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                todoRepo = typeorm_1.getRepository(Todos_1.Todos) // I need the userRepo to manage todos
+                todoRepo = typeorm_1.getRepository(Todos_1.Todos) // I need the todoRepo to manage todos
                 ;
                 return [4 /*yield*/, todoRepo.findOne(req.params.id)];
             case 1:
@@ -181,13 +208,18 @@ var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, 
 }); };
 exports.updateTodo = updateTodo;
 var deleteTodos = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var todos;
+    var todos, todos_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos)["delete"](req.params.id)];
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).findOne(req.params.id)];
             case 1:
                 todos = _a.sent();
-                return [2 /*return*/, res.json(todos)];
+                if (!!todos) return [3 /*break*/, 2];
+                return [2 /*return*/, res.json({ msg: "This todo doesn't exist." })];
+            case 2: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos)["delete"](req.params.id)];
+            case 3:
+                todos_1 = _a.sent();
+                return [2 /*return*/, res.json(todos_1)];
         }
     });
 }); };
