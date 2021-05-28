@@ -15,7 +15,6 @@ import { Router } from 'express';
 import { safe } from './utils';
 import * as actions from './actions';
 
-// declare a new router to include all the endpoints
 const router = Router();
 
 router.get('/users', safe(actions.getUsers));
