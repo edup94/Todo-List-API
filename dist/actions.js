@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.deleteTodos = exports.updateTodo = exports.getTodo = exports.getTodos = exports.createTodo = exports.deleteUsers = exports.updateUser = exports.getUser = exports.getUsers = exports.createUser = void 0;
+exports.updateTodo = exports.getTodo = exports.getTodos = exports.createTodo = exports.deleteUsers = exports.updateUser = exports.getUser = exports.getUsers = exports.createUser = void 0;
 var typeorm_1 = require("typeorm"); // getRepository"  traer una tabla de la base de datos asociada al objeto
 var Users_1 = require("./entities/Users");
 var utils_1 = require("./utils");
@@ -218,21 +218,3 @@ var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.updateTodo = updateTodo;
-//Delete a specific todo
-var deleteTodos = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var todo, todo_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).findOne(req.params.id)];
-            case 1:
-                todo = _a.sent();
-                if (!!todo) return [3 /*break*/, 2];
-                return [2 /*return*/, res.json({ msg: "This todo doesn't exist." })];
-            case 2: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos)["delete"](req.params.id)];
-            case 3:
-                todo_1 = _a.sent();
-                return [2 /*return*/, res.json(todo_1)];
-        }
-    });
-}); };
-exports.deleteTodos = deleteTodos;

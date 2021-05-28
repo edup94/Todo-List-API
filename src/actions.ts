@@ -103,14 +103,3 @@ export const updateTodo = async (req: Request, res:Response): Promise<Response> 
 	const results = await todoRepo.save(todo);
 	return res.json(results);
 }
-
-    //Delete a specific todo
-export const deleteTodos = async (req: Request, res: Response): Promise<Response> =>{
-    const todo = await getRepository(Todos).findOne(req.params.id);
-    if(!todo) {
-        return res.json({ msg :"This todo doesn't exist."});
-    }else {
-    const todo = await getRepository(Todos).delete(req.params.id);
-		return res.json(todo);
-    }	
-}

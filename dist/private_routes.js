@@ -44,5 +44,4 @@ router.get('/todos/users', utils_1.safe(actions.getTodos));
 router.get('/todos/users/:id', utils_1.safe(actions.getTodo));
 router.put('/todos/users/:id', utils_1.safe(actions.updateTodo));
 router["delete"]('/todos/users/:id', utils_1.safe(actions.deleteUsers));
-// router.delete('/todos/:id', safe(actions.deleteTodos));
 exports["default"] = router;

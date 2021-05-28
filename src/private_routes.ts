@@ -26,6 +26,5 @@ router.get('/todos/users', safe(actions.getTodos));
 router.get('/todos/users/:id', safe(actions.getTodo));
 router.put('/todos/users/:id', safe(actions.updateTodo));
 router.delete('/todos/users/:id', safe(actions.deleteUsers));
-// router.delete('/todos/:id', safe(actions.deleteTodos));
 
 export default router;
